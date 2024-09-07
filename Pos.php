@@ -136,6 +136,9 @@
                     </div>
                     <div class="mt-3">
                         <h4>รวม: <span id="total-price">0</span> บาท</h4>
+                        <div class="mt-3 text-center">
+                        <button class="btn btn-outline-dark w-100">ชำระเงิน</button>
+                        </div>
                     </div>
                 </div>
             </div>
