@@ -107,8 +107,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-                    <button type="button" class="btn btn-primary" id="confirm-payment">ยืนยันการชำระเงิน</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-outline-dark" id="confirm-payment">ยืนยันการชำระเงิน</button>
                 </div>
             </div>
         </div>
@@ -128,9 +128,9 @@
                     <p class="cart-title">${name}</p>
                     <p class="cart-text">${price} บาท</p>
                     <div class="quantity-controls">
-                        <button class="btn btn-sm btn-danger">-</button>
+                        <button class="btn btn-outline-dark btn-sm btn-reduce">-</button>
                         <span>1</span>
-                        <button class="btn btn-sm btn-success">+</button>
+                        <button class="btn btn-outline-dark btn-sm btn-add">+</button>
                     </div>
                 </div>
             `);
@@ -164,14 +164,14 @@
                         cartCard.remove();
                     });
 
-                    cartCard.find('.btn-success').on('click', function() {
+                    cartCard.find('.btn-add').on('click', function() {
                         quantity++;
                         cartCard.find('.quantity-controls span').text(quantity);
                         cartCard.find('.cart-text').text(price * quantity + ' บาท');
                         updateTotalPrice(price);
                     });
 
-                    cartCard.find('.btn-danger').on('click', function() {
+                    cartCard.find('.btn-reduce').on('click', function() {
                         if (quantity > 1) {
                             quantity--;
                             cartCard.find('.quantity-controls span').text(quantity);
