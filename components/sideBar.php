@@ -1,10 +1,6 @@
-<style>
-      .sidebar {
-        height: 100vh;
-      }
-    </style>
+
 <div class="d-flex flex-column flex-shrink-0 p-3 bg-light pt-5" style="width: 280px; height: 100%;">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+    <a href="index.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
       <i class="fas fa-coffee me-2" style="font-size: 32px;"></i>
       <span class="fs-4">กาแฟหรือแกฟะ</span>
     </a>

@@ -7,70 +7,9 @@
     <title>Bootstrap POS System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        .product-card {
-            max-width: 300px;
-            margin: 0 auto;
-            cursor: pointer;
-        }
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        .product-card img {
-            height: 150px;
-            object-fit: cover;
-        }
-
-        #cart-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .cart-card {
-            width: 180px;
-            height: 230px;
-            margin: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        .remove-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            cursor: pointer;
-        }
-
-        .cart-card img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            margin-bottom: 5px;
-        }
-
-        .quantity-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .quantity-controls button {
-            margin: 0 5px;
-            width: 30px;
-            height: 30px;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
+    <link rel="stylesheet" href="pos.css">
 </head>
 
 <body>
@@ -137,7 +76,7 @@
                     <div class="mt-3">
                         <h4>รวม: <span id="total-price">0</span> บาท</h4>
                         <div class="mt-3 text-center">
-                        <button class="btn btn-outline-dark w-100">ชำระเงิน</button>
+                            <button class="btn btn-outline-dark w-100" id="checkout-button">ชำระเงิน</button>
                         </div>
                     </div>
                 </div>
@@ -145,17 +84,40 @@
         </div>
     </div>
 
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">ชำระเงิน</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="total-amount" class="form-label">ยอดรวมที่ต้องชำระ</label>
+                        <input type="text" class="form-control" id="total-amount" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="received-amount" class="form-label">รับเงินมา</label>
+                        <input type="number" class="form-control" id="received-amount" placeholder="กรอกจำนวนเงินที่รับมา">
+                    </div>
+                    <div class="mb-3">
+                        <label for="change-amount" class="form-label">เงินทอน</label>
+                        <input type="text" class="form-control" id="change-amount" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-primary" id="confirm-payment">ยืนยันการชำระเงิน</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function() {
-            // ฟังก์ชันการค้นหา
-            $('#search-input').on('keyup', function() {
-                var value = $(this).val().toLowerCase();
-                $('.search-item').filter(function() {
-                    $(this).toggle($(this).data('name').toLowerCase().indexOf(value) > -1);
-                });
-            });
-
             let totalPrice = 0;
 
             function createCartCard(name, price, image) {
@@ -222,6 +184,42 @@
                     updateTotalPrice(price);
                 }
             });
+
+            // แสดง Modal เมื่อกดปุ่ม "ชำระเงิน"
+            $('#checkout-button').on('click', function() {
+                $('#total-amount').val(totalPrice + ' บาท'); // แสดงยอดรวมใน modal
+                $('#paymentModal').modal('show');
+            });
+
+            // คำนวณเงินทอนเมื่อกรอกจำนวนเงินที่รับมา
+            $('#received-amount').on('input', function() {
+                const receivedAmount = parseFloat($(this).val());
+                const changeAmount = receivedAmount - totalPrice;
+                $('#change-amount').val(changeAmount.toFixed(2));
+            });
+
+            // ยืนยันการชำระเงิน
+            $('#confirm-payment').on('click', function() {
+                // แสดง SweetAlert แทนการใช้ alert
+                Swal.fire({
+                    icon: 'success',
+                    title: 'การชำระเงินสำเร็จ!',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true
+                }).then(() => {
+                    // ล้างข้อมูลตะกร้าและยอดรวมหลังการชำระเงิน
+                    $('#cart-items').empty();
+                    $('#total-price').text('0');
+                    totalPrice = 0;
+                    $('#received-amount').val('');
+                    $('#change-amount').val('');
+                    $('#paymentModal').modal('hide'); // ปิด modal หลังการชำระเงินสำเร็จ
+                });
+            });
+
         });
     </script>
 </body>
