@@ -1,8 +1,8 @@
 # ระบบจัดการสินค้ากาแฟ (Coffee Management System)
+
 ## รูปตัวอย่าง
 
 ![Coffee Management System](img/screenshot.jpg)
-
 
 ระบบจัดการสินค้ากาแฟที่พัฒนาด้วย PHP, MySQL, Bootstrap และ SweetAlert แอปพลิเคชันนี้ช่วยให้ผู้ใช้สามารถจัดการสินค้ากาแฟ หมวดหมู่ และแสดงรายการสินค้าต่าง ๆ ได้อย่างง่ายดาย
 
@@ -151,6 +151,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
 ## การอัปโหลดรูปภาพ
 
 ในระบบนี้ คุณสามารถอัปโหลดรูปภาพสินค้าผ่านทางฟอร์มเพิ่มหรือแก้ไขสินค้า โดยระบบจะทำการบันทึกไฟล์รูปภาพลงในโฟลเดอร์ `img/` และตั้งชื่อไฟล์ตาม `ID` ของสินค้ากาแฟนั้น ๆ โดยอัตโนมัติ เพื่อหลีกเลี่ยงการซ้ำกันของชื่อไฟล์
@@ -160,14 +161,6 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 1. เลือกรูปภาพจากเครื่องคอมพิวเตอร์ของคุณ (ไฟล์ `.jpg` เท่านั้น)
 2. รูปภาพที่อัปโหลดจะถูกบันทึกลงในโฟลเดอร์ `img/` และระบบจะตั้งชื่อรูปภาพให้ตรงกับ `ID` ของสินค้านั้น
 3. หากคุณแก้ไขรูปภาพสินค้าใหม่ ระบบจะทำการลบรูปภาพเก่าที่ใช้ `ID` เดียวกันออก และแทนที่ด้วยรูปใหม่ที่คุณอัปโหลด
-
-## การอัปเดตโปรเจกต์
-
-1. กดไปที่หน้า **Pull Requests** ใน GitHub repository ของคุณ
-2. ทำการสร้าง branch ใหม่เพื่อเพิ่มฟีเจอร์หรือแก้ไขโค้ด
-3. เมื่อทำการพัฒนาส่วนที่ต้องการเสร็จแล้ว ให้เปิด pull request เพื่อ merge เข้ากับ branch หลัก
-
----
 
 ## Image Upload Handling
 
