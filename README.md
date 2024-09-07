@@ -1,4 +1,4 @@
-# ระบบจัดการสินค้ากาแฟ (Coffee Management System)
+# ระบบจัดการสินค้ากาแฟ (Coffee Management System)(ยังไม่เสร็จขี้เกียจก่อน)
 
 ## รูปตัวอย่าง
 
