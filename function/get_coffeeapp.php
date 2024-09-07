@@ -34,9 +34,29 @@ class CoffeeApp extends Config
             $stmt->bindParam(':coffee_price', $coffee_price);
             $stmt->bindParam(':coffee_image', $coffee_image);
             $stmt->bindParam(':type_id', $type_id);
-            return $stmt->execute();
+            $stmt->execute();
+            return $pdo->lastInsertId(); // คืนค่า coffee_id ที่เพิ่มใหม่
         } catch (PDOException $e) {
             echo "Insert failed: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    // อัปเดตรูปภาพของกาแฟ
+    public static function updateCoffeeImage($coffee_id, $coffee_image)
+    {
+        $pdo = self::connect();
+        if ($pdo === null) {
+            return false;
+        }
+
+        try {
+            $stmt = $pdo->prepare("UPDATE coffees SET coffee_image = :coffee_image WHERE coffee_id = :coffee_id");
+            $stmt->bindParam(':coffee_image', $coffee_image);
+            $stmt->bindParam(':coffee_id', $coffee_id);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Update failed: " . $e->getMessage();
             return false;
         }
     }
@@ -50,29 +70,11 @@ class CoffeeApp extends Config
         }
 
         try {
-            // ดึงข้อมูลรูปภาพเก่าจากฐานข้อมูล
-            $stmt = $pdo->prepare("SELECT coffee_image FROM coffees WHERE coffee_id = :coffee_id");
-            $stmt->bindParam(':coffee_id', $coffee_id);
-            $stmt->execute();
-            $old_image = $stmt->fetchColumn(); // ชื่อไฟล์รูปภาพเก่า
-
-            // ถ้ามีการอัปโหลดรูปใหม่
+            // อัปเดตข้อมูลในฐานข้อมูล
             if ($coffee_image) {
-                $new_image_name = $coffee_id . '.' . pathinfo($coffee_image, PATHINFO_EXTENSION); // ตั้งชื่อรูปตาม coffee_id
-
-                // ตรวจสอบว่ามีรูปเก่าอยู่และลบรูปเก่าออก
-                if ($old_image && file_exists('../img/' . $old_image)) {
-                    unlink('../img/' . $old_image);
-                }
-
-                // ย้ายไฟล์รูปใหม่ไปที่โฟลเดอร์ img
-                move_uploaded_file($coffee_image['tmp_name'], '../img/' . $new_image_name);
-
-                // อัปเดตข้อมูลในฐานข้อมูลด้วยชื่อไฟล์ใหม่
                 $stmt = $pdo->prepare("UPDATE coffees SET coffee_name = :coffee_name, coffee_price = :coffee_price, coffee_image = :coffee_image, type_id = :type_id WHERE coffee_id = :coffee_id");
-                $stmt->bindParam(':coffee_image', $new_image_name);
+                $stmt->bindParam(':coffee_image', $coffee_image);
             } else {
-                // ถ้าไม่มีการอัปโหลดรูปใหม่ให้อัปเดตข้อมูลยกเว้นรูปภาพ
                 $stmt = $pdo->prepare("UPDATE coffees SET coffee_name = :coffee_name, coffee_price = :coffee_price, type_id = :type_id WHERE coffee_id = :coffee_id");
             }
 
@@ -88,8 +90,6 @@ class CoffeeApp extends Config
             return false;
         }
     }
-
-
 
     // ลบสินค้ากาแฟ
     public static function deleteCoffee($coffee_id)
@@ -108,7 +108,6 @@ class CoffeeApp extends Config
             return false;
         }
     }
-
 
     // ดึงข้อมูลหมวดหมู่ทั้งหมด
     public static function getCoffeeTypes()
@@ -183,4 +182,24 @@ class CoffeeApp extends Config
             return false;
         }
     }
+
+    // ดึงข้อมูลรูปภาพของกาแฟ
+    public static function getCoffeeImage($coffee_id)
+    {
+        $pdo = self::connect();
+        if ($pdo === null) {
+            return null;
+        }
+
+        try {
+            $stmt = $pdo->prepare("SELECT coffee_image FROM coffees WHERE coffee_id = :coffee_id");
+            $stmt->bindParam(':coffee_id', $coffee_id);
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            echo "Query failed: " . $e->getMessage();
+            return null;
+        }
+    }
 }
+?>
