@@ -1,7 +1,11 @@
 <?php
 include 'config/config.php';
 include 'function/get_coffeeapp.php';
-
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
 // ดึงข้อมูลหมวดหมู่
 $coffeeTypes = CoffeeApp::getCoffeeTypes();
 ?>

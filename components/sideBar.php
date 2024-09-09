@@ -46,7 +46,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a href="#" class="nav-link link-dark" aria-current="page">
+        <a href="logout.php" class="nav-link link-dark" aria-current="page">
           <i class="fas fa-sign-out-alt me-2"></i>
           ออกจากระบบ
         </a>

@@ -1,7 +1,11 @@
 <?php
 include 'config/config.php';
 include 'function/get_coffeeapp.php';
-
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
 // รับค่าวันที่จากฟอร์ม ถ้าไม่มีให้ใช้วันที่ปัจจุบัน
 $startDate = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d');
 $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
