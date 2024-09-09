@@ -1,5 +1,5 @@
 # ระบบจัดการสินค้ากาแฟ (Coffee Management System)
-(ยังไม่เสร็จขี้เกียจก่อน)
+(ในdemo แสดงผลได้ไม่ดีกรุณาโหลดลงเครื่อง)
 ตัวอย่างออนไลน์
 http://www.coffeewebapp.free.nf/index.php
 ## รูปตัวอย่าง
