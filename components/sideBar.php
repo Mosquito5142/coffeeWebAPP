@@ -46,6 +46,12 @@
         </a>
       </li>
       <li class="nav-item">
+        <a href="change-img.php" class="nav-link link-dark" aria-current="page">
+          <i class="fas fa-image me-2"></i>
+          เปลี่ยนรูปภาพ
+        </a>
+      </li>
+      <li class="nav-item">
         <a href="logout.php" class="nav-link link-dark" aria-current="page">
           <i class="fas fa-sign-out-alt me-2"></i>
           ออกจากระบบ

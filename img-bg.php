@@ -1,1 +1,1 @@
-https://2.bp.blogspot.com/-0v2DCpj55S4/UCJ02Z8PcmI/AAAAAAAAA4s/YWb7EBTpPEk/s640/Cinemagraphs-Expresso-Coffee.gif
+<?php echo "https://2.bp.blogspot.com/-3llNGxho3Ww/UPMZUw-9xLI/AAAAAAAAIlw/4HEGyLJwFmM/s640/002-anigif-pereir_cinemagraph_by_optimetrics-d4hjg4c.gif"; ?>
