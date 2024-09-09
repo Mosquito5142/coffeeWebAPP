@@ -16,7 +16,7 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li>
-        <a href="#" class="nav-link link-dark">
+        <a href="Dasboard.php" class="nav-link link-dark">
           <i class="fas fa-tachometer-alt me-2"></i>
           Dashboard
         </a>
@@ -40,7 +40,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a href="#" class="nav-link link-dark" aria-current="page">
+        <a href="report.php" class="nav-link link-dark" aria-current="page">
           <i class="fas fa-file-invoice-dollar me-2"></i>
           รายงานรายรับเงิน
         </a>

@@ -43,11 +43,12 @@
                         foreach ($coffees as $coffee) {
                             if ($coffee['type_id'] == $type['type_id']) {
                                 $hasProducts = true; // พบสินค้าที่ตรงกับประเภทนี้
+                                $product_id = $coffee['coffee_id']; // เพิ่มบรรทัดนี้เพื่อดึง coffee_id
                                 $product_name = $coffee['coffee_name'];
                                 $product_price = $coffee['coffee_price'];
                                 $product_image = $coffee['coffee_image'];
                     ?>
-                                <div class="col-md-4 mb-4 add-to-cart search-item" data-name="<?php echo $product_name; ?>" data-price="<?php echo $product_price; ?>" data-image="<?php echo $product_image; ?>">
+                                <div class="col-md-4 mb-4 add-to-cart search-item" data-id="<?php echo $product_id; ?>" data-name="<?php echo $product_name; ?>" data-price="<?php echo $product_price; ?>" data-image="<?php echo $product_image; ?>">
                                     <div class="card product-card">
                                         <img src="<?php echo $product_image; ?>" class="card-img-top" alt="<?php echo $product_name; ?>">
                                         <div class="card-body">
@@ -77,6 +78,7 @@
                         <h4>รวม: <span id="total-price">0</span> บาท</h4>
                         <div class="mt-3 text-center">
                             <button class="btn btn-outline-dark w-100" id="checkout-button">ชำระเงิน</button>
+                            <button class="btn btn-outline-danger w-100 mt-2" id="clear-cart-button">ล้างรายการ</button>
                         </div>
                     </div>
                 </div>
@@ -120,20 +122,20 @@
         $(document).ready(function() {
             let totalPrice = 0;
 
-            function createCartCard(name, price, image) {
+            function createCartCard(id, name, price, image) {
                 return $(`
-                <div class="card cart-card" data-name="${name}">
-                    <span class="remove-btn"><i class="fas fa-times"></i></span>
-                    <img src="${image}" alt="${name}">
-                    <p class="cart-title">${name}</p>
-                    <p class="cart-text">${price} บาท</p>
-                    <div class="quantity-controls">
-                        <button class="btn btn-outline-dark btn-sm btn-reduce">-</button>
-                        <span>1</span>
-                        <button class="btn btn-outline-dark btn-sm btn-add">+</button>
-                    </div>
-                </div>
-            `);
+          <div class="card cart-card" data-id="${id}" data-name="${name}">
+             <span class="remove-btn"><i class="fas fa-times"></i></span>
+                <img src="${image}" alt="${name}">
+               <p class="cart-title">${name}</p>
+              <p class="cart-text">${price} บาท</p>
+                <div class="quantity-controls">
+            <button class="btn btn-outline-dark btn-sm btn-reduce">-</button>
+            <span>1</span>
+            <button class="btn btn-outline-dark btn-sm btn-add">+</button>
+                  </div>
+                 </div>
+                `);
             }
 
             function updateTotalPrice(amount) {
@@ -142,12 +144,13 @@
             }
 
             $('.add-to-cart').on('click', function() {
+                const id = $(this).data('id'); // ดึง coffee_id จาก data-id
                 const name = $(this).data('name');
                 const price = parseInt($(this).data('price'));
                 const image = $(this).data('image');
                 let quantity = 1;
 
-                let existingCartItem = $(`.cart-card[data-name="${name}"]`);
+                let existingCartItem = $(`.cart-card[data-id="${id}"]`);
 
                 if (existingCartItem.length > 0) {
                     let quantityText = existingCartItem.find('.quantity-controls span');
@@ -157,7 +160,7 @@
                     existingCartItem.find('.cart-text').text(price * currentQuantity + ' บาท');
                     updateTotalPrice(price);
                 } else {
-                    let cartCard = createCartCard(name, price, image);
+                    let cartCard = createCartCard(id, name, price, image); // ส่ง coffee_id ไปด้วย
                     cartCard.find('.remove-btn').on('click', function() {
                         let currentQuantity = parseInt(cartCard.find('.quantity-controls span').text());
                         updateTotalPrice(-price * currentQuantity);
@@ -200,26 +203,71 @@
 
             // ยืนยันการชำระเงิน
             $('#confirm-payment').on('click', function() {
-                // แสดง SweetAlert แทนการใช้ alert
-                Swal.fire({
-                    icon: 'success',
-                    title: 'การชำระเงินสำเร็จ!',
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    timerProgressBar: true
-                }).then(() => {
-                    // ล้างข้อมูลตะกร้าและยอดรวมหลังการชำระเงิน
-                    $('#cart-items').empty();
-                    $('#total-price').text('0');
-                    totalPrice = 0;
-                    $('#received-amount').val('');
-                    $('#change-amount').val('');
-                    $('#paymentModal').modal('hide'); // ปิด modal หลังการชำระเงินสำเร็จ
+                let cartItems = [];
+                $('#cart-items .cart-card').each(function() {
+                    const name = $(this).data('name');
+                    const price = parseInt($(this).find('.cart-text').text().replace(' บาท', ''));
+                    const quantity = parseInt($(this).find('.quantity-controls span').text());
+                    const coffee_id = $(this).data('id'); // ดึง coffee_id จาก data-id attribute
+
+                    cartItems.push({
+                        coffee_id: coffee_id,
+                        quantity: quantity,
+                        unit_price: price / quantity,
+                        total_price: price
+                    });
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'AC/process_order.php',
+                    data: {
+                        total_amount: totalPrice,
+                        received_amount: $('#received-amount').val(),
+                        change_amount: $('#change-amount').val(),
+                        cart_items: JSON.stringify(cartItems)
+                    },
+                    success: function(response) {
+                        let result = JSON.parse(response);
+                        if (result.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'การชำระเงินสำเร็จ!',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true
+                            }).then(() => {
+                                $('#cart-items').empty();
+                                $('#total-price').text('0');
+                                totalPrice = 0;
+                                $('#received-amount').val('');
+                                $('#change-amount').val('');
+                                $('#paymentModal').modal('hide');
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'เกิดข้อผิดพลาด!',
+                                text: result.message,
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true
+                            });
+                        }
+                    }
                 });
             });
 
+            // ล้างรายการสินค้าที่เลือก
+            $('#clear-cart-button').on('click', function() {
+                $('#cart-items').empty();
+                $('#total-price').text('0');
+                totalPrice = 0;
+            });
         });
     </script>
 </body>

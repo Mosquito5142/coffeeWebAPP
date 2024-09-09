@@ -201,5 +201,159 @@ class CoffeeApp extends Config
             return null;
         }
     }
+    public static function processOrder($total_amount, $received_amount, $change_amount, $cart_items)
+    {
+        $pdo = self::connect();
+        if ($pdo === null) {
+            return ['status' => 'error', 'message' => 'Database connection failed'];
+        }
+
+        try {
+            // เริ่มต้น transaction
+            $pdo->beginTransaction();
+
+            // บันทึกข้อมูลในตาราง orders
+            $stmt = $pdo->prepare("
+                INSERT INTO orders (order_date, total_amount, tax_amount, discount_amount)
+                VALUES (NOW(), :total_amount, 0, 0)
+            ");
+            $stmt->bindParam(':total_amount', $total_amount);
+            $stmt->execute();
+            $order_id = $pdo->lastInsertId(); // ดึง order_id ที่พึ่งบันทึก
+
+            // บันทึกข้อมูลสินค้าในตาราง order_items
+            $stmt_items = $pdo->prepare("
+                INSERT INTO order_items (order_id, coffee_id, quantity, unit_price, total_price)
+                VALUES (:order_id, :coffee_id, :quantity, :unit_price, :total_price)
+            ");
+            foreach ($cart_items as $item) {
+                $stmt_items->bindParam(':order_id', $order_id);
+                $stmt_items->bindParam(':coffee_id', $item['coffee_id']);
+                $stmt_items->bindParam(':quantity', $item['quantity']);
+                $stmt_items->bindParam(':unit_price', $item['unit_price']);
+                $stmt_items->bindParam(':total_price', $item['total_price']);
+                $stmt_items->execute();
+            }
+
+            // บันทึกข้อมูลสำเร็จ
+            $pdo->commit();
+
+            return ['status' => 'success'];
+        } catch (PDOException $e) {
+            // มีข้อผิดพลาด
+            $pdo->rollBack();
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    // ฟังก์ชันดึงข้อมูลยอดขาย
+    public static function getSalesReport($startDate = null, $endDate = null)
+    {
+        $pdo = self::connect();
+        if ($pdo === null) {
+            return ['status' => 'error', 'message' => 'Database connection failed'];
+        }
+
+        try {
+            if ($startDate === null) {
+                $startDate = date('Y-m-d');
+            }
+            if ($endDate === null) {
+                $endDate = date('Y-m-d');
+            }
+
+            $stmt = $pdo->prepare("
+                SELECT 
+                    o.order_id,
+                    o.order_date,
+                    p.coffee_name,
+                    o.total_amount,
+                    oi.unit_price,
+                    SUM(oi.quantity) AS total_quantity,
+                    SUM(oi.total_price) AS total_sales
+                FROM order_items oi
+                JOIN coffees p ON oi.coffee_id = p.coffee_id
+                JOIN orders o ON oi.order_id = o.order_id
+                WHERE DATE(o.order_date) BETWEEN :startDate AND :endDate
+                GROUP BY o.order_id, o.order_date, p.coffee_name
+                ORDER BY o.order_date DESC, total_sales DESC
+            ");
+            $stmt->bindParam(':startDate', $startDate);
+            $stmt->bindParam(':endDate', $endDate);
+            $stmt->execute();
+            $salesReport = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return ['status' => 'success', 'data' => $salesReport];
+        } catch (PDOException $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    // ฟังก์ชันดึงจำนวนคำสั่งซื้อ
+    public static function getOrderCount($startDate = null, $endDate = null)
+    {
+        $pdo = self::connect();
+        if ($pdo === null) {
+            return 0;
+        }
+
+        try {
+            if ($startDate === null) {
+                $startDate = date('Y-m-d');
+            }
+            if ($endDate === null) {
+                $endDate = date('Y-m-d');
+            }
+
+            $stmt = $pdo->prepare("
+                SELECT COUNT(*) AS order_count
+                FROM orders
+                WHERE DATE(order_date) BETWEEN :startDate AND :endDate
+            ");
+            $stmt->bindParam(':startDate', $startDate);
+            $stmt->bindParam(':endDate', $endDate);
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            return 0;
+        }
+    }
+
+    // ฟังก์ชันดึงสินค้าที่ขายดี
+    public static function getBestSellingProduct($startDate = null, $endDate = null)
+    {
+        $pdo = self::connect();
+        if ($pdo === null) {
+            return null;
+        }
+
+        try {
+            if ($startDate === null) {
+                $startDate = date('Y-m-d');
+            }
+            if ($endDate === null) {
+                $endDate = date('Y-m-d');
+            }
+
+            $stmt = $pdo->prepare("
+                SELECT 
+                    p.coffee_name,
+                    SUM(oi.quantity) AS total_quantity
+                FROM order_items oi
+                JOIN coffees p ON oi.coffee_id = p.coffee_id
+                JOIN orders o ON oi.order_id = o.order_id
+                WHERE DATE(o.order_date) BETWEEN :startDate AND :endDate
+                GROUP BY p.coffee_name
+                ORDER BY total_quantity DESC
+                LIMIT 1
+            ");
+            $stmt->bindParam(':startDate', $startDate);
+            $stmt->bindParam(':endDate', $endDate);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }
 ?>
