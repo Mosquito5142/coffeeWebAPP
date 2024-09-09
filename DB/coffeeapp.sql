@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 09, 2024 at 04:29 AM
+-- Generation Time: Sep 09, 2024 at 06:49 AM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -61,11 +61,11 @@ CREATE TABLE `coffees` (
 --
 
 INSERT INTO `coffees` (`coffee_id`, `coffee_name`, `coffee_price`, `coffee_image`, `type_id`) VALUES
-(1, 'ลาเต้คาราเมล', '64.00', 'img/1.jpg', 1),
-(2, 'เอสเปรสโซ่ดับเบิ้ล', '55.00', 'img/2.jpg', 1),
-(3, 'มอคค่าช็อคโกแลต', '70.00', 'img/3.jpg', 1),
-(5, 'ชานมเย็น', '50.00', 'img/5.jpg', 13),
-(6, 'ขนม', '1.00', 'img/6.jpg', 1);
+(1, 'Americano', '64.00', 'img/1.jpg', 1),
+(2, 'Double espresso', '55.00', 'img/2.jpg', 1),
+(3, 'Chocolate Mocha', '70.00', 'img/3.jpg', 1),
+(5, 'Iced milk tea', '50.00', 'img/5.jpg', 13),
+(6, 'coffee cake', '50.00', 'img/6.jpg', 14);
 
 -- --------------------------------------------------------
 
@@ -83,8 +83,9 @@ CREATE TABLE `coffee_types` (
 --
 
 INSERT INTO `coffee_types` (`type_id`, `type_name`) VALUES
-(1, 'กาแฟ'),
-(13, 'ชา');
+(1, 'coffee'),
+(13, 'tea'),
+(14, 'dessert');
 
 -- --------------------------------------------------------
 
@@ -194,7 +195,7 @@ ALTER TABLE `coffees`
 -- AUTO_INCREMENT for table `coffee_types`
 --
 ALTER TABLE `coffee_types`
-  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `orders`

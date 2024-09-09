@@ -8,6 +8,7 @@ session_start();
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
     <title>Login</title>
     <style>
         @import url(https://fonts.googleapis.com/css?family=Exo:100,200,400);
@@ -68,7 +69,7 @@ session_start();
 
         .header div span {
             color: #a18d6c !important;
-            border: #fff;
+            text-shadow: 0 0 3px #FFF;
         }
 
         .login {

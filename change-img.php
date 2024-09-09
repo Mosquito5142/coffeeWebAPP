@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         .header div span {
             color: #a18d6c !important;
-            border: #fff;
+            text-shadow: 0 0 3px #FFF;
         }
 
         .img-change {
