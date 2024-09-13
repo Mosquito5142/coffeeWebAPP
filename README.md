@@ -70,10 +70,6 @@ http://www.coffeewebapp.free.nf/index.php
 
 ![Coffee Management System](img/screenshot.png)
 
-## ใบอนุญาต
-
-โปรเจกต์นี้ได้รับอนุญาตภายใต้ MIT License - ดูไฟล์ [LICENSE](LICENSE) สำหรับรายละเอียดเพิ่มเติม
-
 ## การร่วมพัฒนา
 
 สามารถส่ง Pull Request เข้ามาได้ สำหรับการเปลี่ยนแปลงใหญ่กรุณาเปิดประเด็นเพื่อพูดคุยก่อน
@@ -145,10 +141,6 @@ A web-based coffee management system built with PHP, MySQL, Bootstrap, and Sweet
 ## Screenshots
 
 ![Coffee Management System](img/screenshot.png)
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
